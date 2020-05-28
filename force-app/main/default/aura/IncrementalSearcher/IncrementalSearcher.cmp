@@ -16,9 +16,16 @@
                   value="{!v.searchString}"
                   updateOn="keyup"
                   keyup="{!c.SearchKeyChange}"/> -->
-  <ui:inputText aura:id="searchString" label="Search"
-    value="{!v.searchString}"/>
-    <lightning:button label="Search" onclick="{!c.doSearch}"/>
+    <lightning:layout>
+      <lightning:layoutItem size="6" padding="around-small">
+        <ui:inputText aura:id="searchString"  value="{!v.searchString}" placeholder="type FirstName or LastName"/>  
+      </lightning:layoutItem>
+      <lightning:layoutItem size="3" padding="around-small" class="slds-align-bottom">
+        <lightning:button label="Search" onclick="{!c.doSearch}" class="search-button"/>
+      </lightning:layoutItem>
+    </lightning:layout>
+  
+    
   <lightning:datatable
     keyField="id"
     data="{! v.contacts }"

@@ -1,2 +1,9 @@
-.THIS {
+.THIS .search-box{
+  padding: 5px;
+  margin: 0px;
+  border: 1px solid #dce4ec;
+  border-radius: 2px;   
+}
+.THIS .search-button{
+  height: 36px;
 }
