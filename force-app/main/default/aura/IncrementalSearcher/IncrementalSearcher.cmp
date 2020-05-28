@@ -1,0 +1,38 @@
+<aura:component implements="flexipage:availableForAllPageTypes" access="global" controller="IncrementalLightningController">
+  <aura:attribute name="contacts" type="Contact[]"/>
+  <aura:attribute name="columns" type="List"/>
+
+  <aura:attribute name="searchString" type="String"/> 
+  <aura:attribute name="timer" type="Integer"/>
+  <aura:attribute name="pageNumber" type="Integer" default="1"/>
+  <aura:attribute name="pageSize" type="Integer" default="10"/>
+  <aura:attribute name="totalRecords" type="Integer" default="0"/> 
+  <!-- <aura:attribute name="isLastPage" type="Boolean" default="false"/> -->
+  <aura:attribute name="lastPageNumber" type="Integer" default="1"/>
+
+  <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+
+  <!-- <ui:inputText aura:id="searchString" label="Search"
+                  value="{!v.searchString}"
+                  updateOn="keyup"
+                  keyup="{!c.SearchKeyChange}"/> -->
+  <ui:inputText aura:id="searchString" label="Search"
+    value="{!v.searchString}"/>
+    <lightning:button label="Search" onclick="{!c.doSearch}"/>
+  <lightning:datatable
+    keyField="id"
+    data="{! v.contacts }"
+    columns="{! v.columns }"
+    hideCheckboxColumn="true"/>
+  <div class="slds-clearfix">
+    <div class="slds-page-header" role="banner">
+        <div class="slds-float_right">            
+            <lightning:button label="Prev" iconName="utility:chevronleft" iconPosition="left"
+                              onclick="{!c.handlePrev}" disabled="{! v.pageNumber == 1}"/>
+            <lightning:button label="Next" iconName="utility:chevronright" iconPosition="right"
+                              disabled="{! v.pageNumber==v.lastPageNumber}" onclick="{!c.handleNext}"/>
+        </div>
+        <p class="slds-page-header__title">Page {!v.pageNumber}/{!v.lastPageNumber} | {! ((v.pageNumber-1)*v.pageSize)+' to '+((v.pageNumber)*v.pageSize)} | total: {!v.totalRecords}</p>
+    </div>
+  </div>
+</aura:component>	
