@@ -32,7 +32,7 @@
             <lightning:button label="Next" iconName="utility:chevronright" iconPosition="right"
                               disabled="{! v.pageNumber==v.lastPageNumber}" onclick="{!c.handleNext}"/>
         </div>
-        <p class="slds-page-header__title">Page {!v.pageNumber}/{!v.lastPageNumber} | {! ((v.pageNumber-1)*v.pageSize)+' to '+((v.pageNumber)*v.pageSize)} | total: {!v.totalRecords}</p>
+        <p class="slds-page-header__title">Page {!v.pageNumber}/{!v.lastPageNumber} | {! ((v.pageNumber-1)*v.pageSize)+' to '+((v.pageNumber)*v.pageSize>v.totalRecords?v.totalRecords:(v.pageNumber)*v.pageSize)} | total: {!v.totalRecords}</p>
     </div>
   </div>
 </aura:component>	
