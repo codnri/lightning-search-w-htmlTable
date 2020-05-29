@@ -12,8 +12,25 @@
         action.setCallback(this,function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
+                //turn on isChecked field
+                var selectedRowsMap = cmp.get('v.selectedRows');
                 var result = response.getReturnValue();
                 console.log('result ---->' + JSON.stringify(result));
+                for(var i=0;i<result.contacts.length;i++){
+                    var con = result.contacts[i];
+
+                    con.isChecked = selectedRowsMap.has(con.Id)? true : false;//turn on isChecked field
+                     
+                    if(result.contacts[i].Account){
+                        result.contacts[i].AccountName 
+                            = result.contacts[i].Account.Name;
+                    }else{
+                        result.contacts[i].AccountName ='';
+                    }
+                }
+                console.log('result.contacts ---->' + JSON.stringify(result.contacts));
+
+                
                 cmp.set("v.contacts", result.contacts);
                 cmp.set("v.pageNumber", result.pageNumber);
                 cmp.set("v.totalRecords", result.totalRecords);

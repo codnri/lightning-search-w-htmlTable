@@ -14,9 +14,9 @@ public with sharing class IncrementalLightningController {
         Integer offset = ((Integer)pageNumber - 1) * pageSize;
         String searchText = '%'+keyword+'%';
         Integer total = [SELECT COUNT() FROM Contact 
-            WHERE FirstName LIKE :searchText OR LastName LIKE :searchText];
-        List<Contact> contacts = [SELECT FirstName,LastName, Title, Account.Name FROM Contact 
-            WHERE FirstName LIKE :searchText OR LastName LIKE :searchText
+            WHERE Name LIKE :searchText ];
+        List<Contact> contacts = [SELECT Name,FirstName,LastName, Title, Account.Name FROM Contact 
+            WHERE Name LIKE :searchText 
             LIMIT :pageSize OFFSET :offset];
         return new ContactWrapper(pageSize,(Integer)pageNumber,total,contacts);
     }

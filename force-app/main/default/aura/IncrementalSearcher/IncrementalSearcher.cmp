@@ -7,8 +7,9 @@
   <aura:attribute name="pageNumber" type="Integer" default="1"/>
   <aura:attribute name="pageSize" type="Integer" default="10"/>
   <aura:attribute name="totalRecords" type="Integer" default="0"/> 
-  <!-- <aura:attribute name="isLastPage" type="Boolean" default="false"/> -->
   <aura:attribute name="lastPageNumber" type="Integer" default="1"/>
+  <aura:attribute name="selectedRows" type="Map" />
+
 
   <aura:handler name="init" value="{! this }" action="{! c.init }"/>
 
@@ -26,12 +27,175 @@
     </lightning:layout>
   
     
-  <lightning:datatable
+  <!-- <lightning:datatable
     keyField="id"
     data="{! v.contacts }"
     columns="{! v.columns }"
-    hideCheckboxColumn="true"/>
-  <div class="slds-clearfix">
+    hideCheckboxColumn="true"/> -->
+ 
+
+  <table aria-multiselectable="true"
+    class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols" role="grid">
+  <thead>
+    <tr class="slds-line-height_reset">
+      <th class="slds-text-align_right" scope="col" style="width:3.25rem" >
+
+        <div class="slds-form-element">
+          <div class="slds-form-element__control">
+              <label class="slds-checkbox" style="padding: 0.25rem 0.35rem">
+                  <ui:inputCheckbox disabled="{!v.totalRecords == 0}"
+                                    aura:id="selectAllId"
+                                    change="{!c.selectAllCheckbox}"/>
+                  <span class="slds-checkbox_faux"></span>
+                  <span class="slds-form-element__label"></span>
+              </label>
+          </div>
+        </div>
+        
+        <!-- <span id="column-group-header" class="slds-assistive-text">Choose a row</span> -->
+        <!-- <div class="slds-th__action slds-th__action_form">
+          <div class="slds-checkbox">
+            <input type="checkbox" name="options" id="checkbox-unique-id-309" value="checkbox-unique-id-309"
+              tabindex="0" aria-labelledby="check-select-all-label column-group-header" />
+            <label class="slds-checkbox__label" for="checkbox-unique-id-309" id="check-select-all-label">
+              <span class="slds-checkbox_faux"></span>
+              <span class="slds-form-element__label slds-assistive-text">Select All</span>
+            </label>
+          </div>
+        </div> -->
+
+      </th>
+
+      <th aria-label="Name" aria-sort="none" class="slds-is-resizable slds-is-sortable" scope="col">
+        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="0">
+          <!-- <span class="slds-assistive-text">Sort by: </span> -->
+          <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+            <span class="slds-truncate" title="Name">Name</span>
+            <!-- <span class="slds-icon_container slds-icon-utility-arrowdown">
+              <svg class="slds-icon slds-icon-text-default slds-is-sortable__icon " aria-hidden="true">
+                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowdown"></use>
+              </svg>
+            </span> -->
+          </div>
+        </a>
+        <div class="slds-resizable">
+          <input type="range" aria-label="Name column width" class="slds-resizable__input slds-assistive-text"
+            id="cell-resize-handle-561" max="1000" min="20" tabindex="0" />
+          <span class="slds-resizable__handle">
+            <span class="slds-resizable__divider"></span>
+          </span>
+        </div>
+      </th>
+
+      <th aria-label="Company" aria-sort="none" class="slds-is-resizable slds-is-sortable" scope="col">
+        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="0">
+          <!-- <span class="slds-assistive-text">Sort by: </span> -->
+          <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+            <span class="slds-truncate" title="Company">Company</span>
+          </div>
+        </a>
+        <div class="slds-resizable">
+          <input type="range" aria-label="Account Name column width" class="slds-resizable__input slds-assistive-text"
+            id="cell-resize-handle-562" max="1000" min="20" tabindex="0" />
+          <span class="slds-resizable__handle">
+            <span class="slds-resizable__divider"></span>
+          </span>
+        </div>
+      </th>
+      
+
+      <th aria-label="Title" aria-sort="none" class="slds-is-resizable slds-is-sortable" scope="col">
+        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="0">
+          <span class="slds-assistive-text">Sort by: </span>
+          <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+            <span class="slds-truncate" title="Title">Title</span>
+          </div>
+        </a>
+        <div class="slds-resizable">
+          <input type="range" aria-label="Account Name column width" class="slds-resizable__input slds-assistive-text"
+            id="cell-resize-handle-562" max="1000" min="20" tabindex="0" />
+          <span class="slds-resizable__handle">
+            <span class="slds-resizable__divider"></span>
+          </span>
+        </div>
+      </th>
+      
+      
+    </tr>
+  </thead>
+  <tbody>
+
+    <aura:iteration items="{!v.contacts}" var="contact">
+      <tr aria-selected="false" class="slds-hint-parent">
+        <td class="slds-text-align_right" role="gridcell">
+          
+          <div class="slds-form-element">
+            <div class="slds-form-element__control">
+                <label class="slds-checkbox">
+                    <ui:inputCheckbox text="{!contact.Id}"
+                                      value="{!contact.isChecked}"
+                                      change="{!c.checkboxSelect}"/>
+                    <span class="slds-checkbox_faux"></span>
+                    <span class="slds-form-element__label text"></span>
+                </label>
+            </div>
+          </div>
+          <!-- STANDARD <div class="slds-checkbox">
+            <input type="checkbox" name="options" id="{! 'checkbox-' + contact.Id}" value="{!contact.Id}" tabindex="0"
+              aria-labelledby="{! 'check-button-label-' + contact.Id + 'column-group-header'}"
+              onchange="{!c.checkboxSelect}" />
+            <label class="slds-checkbox__label" for="{! 'checkbox-' + contact.Id}" id="{! 'check-button-label-' + contact.Id}">
+              <span class="slds-checkbox_faux"></span>
+            </label>                                  
+          </div> -->
+
+        </td>
+        <th scope="row">
+          <div class="slds-truncate" title="{!contact.Name}">
+            <a href="{! '/' + contact.Id}" tabindex="0">{!contact.Name}</a>
+          </div>
+        </th>
+        <td role="gridcell">
+          <div class="slds-truncate" title="{!contact.AccountName}">
+            <a href="{! '/' + contact.AccountId}" tabindex="0">{!contact.AccountName}</a>
+          </div>
+        </td>
+        <td role="gridcell">
+          <div class="slds-truncate" title="{!contact.Title}">{!contact.Title}</div>
+        </td>
+        
+      </tr>
+    </aura:iteration>
+    <!-- <tr aria-selected="false" class="slds-hint-parent">
+      <td class="slds-text-align_right" role="gridcell">
+        <div class="slds-checkbox">
+          <input type="checkbox" name="options" id="checkbox-02" value="checkbox-02" tabindex="0"
+            aria-labelledby="check-button-label-02 column-group-header" />
+          <label class="slds-checkbox__label" for="checkbox-02" id="check-button-label-02">
+            <span class="slds-checkbox_faux"></span>
+            <span class="slds-form-element__label slds-assistive-text">Select item 2</span>
+          </label>
+        </div>
+      </td>
+      <th scope="row">
+        <div class="slds-truncate" title="Acme - 200 Widgets">
+          <a href="javascript:void(0);" tabindex="0">Acme - 200 Widgets</a>
+        </div>
+      </th>
+      <td role="gridcell">
+        <div class="slds-truncate" title="Acme">Acme</div>
+      </td>
+      <td role="gridcell">
+        <div class="slds-truncate" title="bob@acme.com">
+          <a href="javascript:void(0);" tabindex="0">bob@acme.com</a>
+        </div>
+      </td>
+      
+    </tr> -->
+  </tbody>
+</table>
+
+    <div class="slds-clearfix">
     <div class="slds-page-header" role="banner">
         <div class="slds-float_right">            
             <lightning:button label="Prev" iconName="utility:chevronleft" iconPosition="left"
